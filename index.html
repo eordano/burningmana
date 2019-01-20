@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="web3.min.js"></script>
+        <script type="text/javascript" src="bignumber.min.js"></script>
+    </head>
+    <body>
+        <div id="toburn"></div>
+        <button id="burn">Burn it!</button>
+        <script>
+window.addEventListener('load', function() {
+    document.getElementById('burn').addEventListener('click', function(ev) {
+        ev.preventDefault()
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum)
+            ethereum.enable().then(function() {
+                web3.eth.getAccounts().then(function(accounts) {
+                    web3.eth.sendTransaction({
+                        from: accounts[0],
+                        to: '0xadfeb1de7876fcabeaf87df5a6c566b70f970018',
+                        value: 0,
+                        data: '0x44df8e70'
+                    })
+                })
+            })
+        } else {
+            alert('web3 not present')
+        }
+    })
+    fetch(
+        "https://node3.web3api.com/",
+        {
+            "credentials": "omit",
+            "headers": {
+                "content-type": "application/json"
+            },
+            "referrerPolicy":"same-origin",
+            "body": JSON.stringify({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "eth_call",
+                "params": [
+                    {
+                        "to": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
+                        "data": "0x70a08231000000000000000000000000adfeb1de7876fcabeaf87df5a6c566b70f970018"
+                    },
+                    "latest"
+                ]}),
+            "method": "POST",
+            "mode": "cors"
+        }
+    ).then(function(response) {
+        return response.json()
+    }).then(function(body) {
+        const num = new window.BigNumber(body.result)
+        document.getElementById('toburn').innerHTML = (num.div(1e18).toString())
+    })
+})
+        </script>
+    </body>
+</html>
+
